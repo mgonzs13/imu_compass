@@ -1,28 +1,21 @@
 <?xml version="1.0"?>
-<package>
+<package format="3">
   <name>imu_compass</name>
   <version>0.0.5</version>
-  <description>Node to combine IMU data (accelerometers and gyroscopes) with Compass data (magnetometers) for a cleaner reading of a Vehicles Heading</description>
+  <description>Node to combine IMU data (accelerometers and gyroscopes) with Compass data (magnetometers) for a cleaner reading of a Vehicle's Heading</description>
   <maintainer email="pmukherj@clearpathrobotics.com">Prasenjit Mukherjee</maintainer>
-
   <license>BSD</license>
-
-  <!-- Example: -->
-  <!-- <url type="website">http://ros.org/wiki/imu_compass</url> -->
-
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>tf</build_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>python-scipy</run_depend>
-
-  <!-- The export tag contains other, unspecified, tags -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <!-- Optional Python dependency (if the calibration script uses it) -->
+  <exec_depend>python3-scipy</exec_depend>
   <export>
-
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

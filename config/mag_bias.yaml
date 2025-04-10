@@ -1,0 +1,7 @@
+imu_compass_node:
+  ros__parameters:
+    mag_bias:
+      x: 0.183117
+      y: 0.273127
+      z: -0.761884
+      radius: 0.271064

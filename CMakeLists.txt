@@ -1,32 +1,54 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(imu_compass)
 
-find_package(catkin REQUIRED COMPONENTS geometry_msgs sensor_msgs std_msgs tf)
-
-catkin_package()
-
-if(NOT WIN32)
-  set_directory_properties(PROPERTIES COMPILE_OPTIONS "-std=c++11")
+# Default to C++14 or higher
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 
-include_directories(include
-  ${catkin_INCLUDE_DIRS}
+# Dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+
+# Include directories
+include_directories(
+  include
 )
 
+# Executable
 add_executable(imu_compass src/imu_compass.cpp)
-target_link_libraries(imu_compass ${catkin_LIBRARIES})
+ament_target_dependencies(imu_compass
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
+)
 
-install(
-  TARGETS imu_compass
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# Installation
+install(TARGETS imu_compass
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
-  PROGRAMS scripts/compute_calibration
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  PROGRAMS scripts/compute_calibration.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME compute_calibration
 )
 
-install(
-  DIRECTORY launch config
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+install(DIRECTORY
+  launch
+  config
+  DESTINATION share/${PROJECT_NAME}/
 )
+
+# Package
+ament_package()
