@@ -22,8 +22,8 @@ include_directories(
 )
 
 # Executable
-add_executable(imu_compass src/imu_compass.cpp)
-ament_target_dependencies(imu_compass
+add_executable(imu_compass_node src/imu_compass_node.cpp src/imu_compass_main.cpp)
+ament_target_dependencies(imu_compass_node
   rclcpp
   sensor_msgs
   std_msgs
@@ -34,14 +34,8 @@ ament_target_dependencies(imu_compass
 )
 
 # Installation
-install(TARGETS imu_compass
+install(TARGETS imu_compass_node
   DESTINATION lib/${PROJECT_NAME}
-)
-
-install(
-  PROGRAMS scripts/compute_calibration.py
-  DESTINATION lib/${PROJECT_NAME}
-  RENAME compute_calibration
 )
 
 install(DIRECTORY

@@ -13,8 +13,6 @@
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
   <depend>tf2_geometry_msgs</depend>
-  <!-- Optional Python dependency (if the calibration script uses it) -->
-  <exec_depend>python3-scipy</exec_depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>

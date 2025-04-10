@@ -5,7 +5,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-#include "imu_compass/imu_compass.hpp"
+#include "imu_compass/imu_compass_node.hpp"
 
 using std::placeholders::_1;
 
@@ -13,7 +13,7 @@ double magn(tf2::Vector3 a) {
   return std::sqrt(a.x() * a.x() + a.y() * a.y() + a.z() * a.z());
 }
 
-IMUCompass::IMUCompass() : Node("imu_compass_node") {
+IMUCompassNode::IMUCompassNode() : Node("imu_compass_node") {
   // Declare and get parameters
   this->declare_parameter("base_link", "base_link");
   this->declare_parameter("mag_bias.x", 0.0);
@@ -49,13 +49,13 @@ IMUCompass::IMUCompass() : Node("imu_compass_node") {
   // Subscribers
   this->imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
       "imu/data", rclcpp::SensorDataQoS(),
-      std::bind(&IMUCompass::imu_callback, this, _1));
+      std::bind(&IMUCompassNode::imu_callback, this, _1));
   this->mag_sub_ = this->create_subscription<sensor_msgs::msg::MagneticField>(
       "imu/mag", rclcpp::SensorDataQoS(),
-      std::bind(&IMUCompass::mag_callback, this, _1));
+      std::bind(&IMUCompassNode::mag_callback, this, _1));
   this->decl_sub_ = this->create_subscription<std_msgs::msg::Float32>(
       "imu/declination", rclcpp::SensorDataQoS(),
-      std::bind(&IMUCompass::decl_callback, this, _1));
+      std::bind(&IMUCompassNode::decl_callback, this, _1));
 
   // Publishers
   this->imu_pub_ =
@@ -68,8 +68,9 @@ IMUCompass::IMUCompass() : Node("imu_compass_node") {
       create_publisher<std_msgs::msg::Float32>("imu/raw_compass_heading", 10);
 
   // Timer
-  this->debug_timer_ = this->create_wall_timer(
-      std::chrono::seconds(1), std::bind(&IMUCompass::debug_callback, this));
+  this->debug_timer_ =
+      this->create_wall_timer(std::chrono::seconds(1),
+                              std::bind(&IMUCompassNode::debug_callback, this));
 
   this->first_mag_reading_ = false;
   this->first_gyro_reading_ = false;
@@ -81,7 +82,7 @@ IMUCompass::IMUCompass() : Node("imu_compass_node") {
   RCLCPP_INFO(this->get_logger(), "Compass Estimator Started");
 }
 
-void IMUCompass::debug_callback() {
+void IMUCompassNode::debug_callback() {
   if (!this->first_gyro_reading_) {
     RCLCPP_WARN(this->get_logger(),
                 "Waiting for IMU data, no gyroscope data available");
@@ -111,7 +112,7 @@ void IMUCompass::debug_callback() {
   }
 }
 
-void IMUCompass::imu_callback(sensor_msgs::msg::Imu::SharedPtr data) {
+void IMUCompassNode::imu_callback(sensor_msgs::msg::Imu::SharedPtr data) {
   auto gyro_vector = data->angular_velocity;
   geometry_msgs::msg::Vector3 gyro_vector_transformed;
 
@@ -158,13 +159,15 @@ void IMUCompass::imu_callback(sensor_msgs::msg::Imu::SharedPtr data) {
   this->curr_imu_reading_ = *data;
 }
 
-void IMUCompass::decl_callback(const std_msgs::msg::Float32::SharedPtr data) {
+void IMUCompassNode::decl_callback(
+    const std_msgs::msg::Float32::SharedPtr data) {
   this->mag_declination_ = data->data;
   RCLCPP_INFO(this->get_logger(), "Updated declination: %f (%f deg)",
               this->mag_declination_, this->mag_declination_ * 180 / M_PI);
 }
 
-void IMUCompass::mag_callback(sensor_msgs::msg::MagneticField::SharedPtr data) {
+void IMUCompassNode::mag_callback(
+    sensor_msgs::msg::MagneticField::SharedPtr data) {
   if (std::isnan(data->magnetic_field.x) ||
       std::isnan(data->magnetic_field.y) || std::isnan(data->magnetic_field.z))
     return;
@@ -251,7 +254,7 @@ void IMUCompass::mag_callback(sensor_msgs::msg::MagneticField::SharedPtr data) {
   }
 }
 
-void IMUCompass::repackage_imu_publish(
+void IMUCompassNode::repackage_imu_publish(
     const geometry_msgs::msg::TransformStamped &transform) {
 
   tf2::Quaternion q;
@@ -282,17 +285,10 @@ void IMUCompass::repackage_imu_publish(
   this->imu_pub_->publish(this->curr_imu_reading_);
 }
 
-void IMUCompass::init_filter(double heading_meas) {
+void IMUCompassNode::init_filter(double heading_meas) {
   this->curr_heading_ = heading_meas;
   this->curr_heading_variance_ = 1.0;
   this->filter_initialized_ = true;
   RCLCPP_INFO(this->get_logger(), "Compass filter initialized with heading: %f",
               heading_meas);
-}
-
-int main(int argc, char **argv) {
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<IMUCompass>());
-  rclcpp::shutdown();
-  return 0;
 }

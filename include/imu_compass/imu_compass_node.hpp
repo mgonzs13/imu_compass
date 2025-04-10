@@ -15,10 +15,10 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
-class IMUCompass : public rclcpp::Node {
+class IMUCompassNode : public rclcpp::Node {
 public:
-  IMUCompass();
-  ~IMUCompass() = default;
+  IMUCompassNode();
+  ~IMUCompassNode() = default;
 
 private:
   // Subscribers

@@ -1,6 +1,6 @@
+import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
-import os
 
 
 def generate_launch_description():
@@ -16,7 +16,7 @@ def generate_launch_description():
         [
             Node(
                 package="imu_compass",
-                executable="imu_compass",
+                executable="imu_compass_node",
                 name="imu_compass_node",
                 parameters=[config_file],
                 output="screen",
