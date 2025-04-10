@@ -1,6 +1,7 @@
 imu_compass_node:
   ros__parameters:
-    base_link: "base_link"
+    use_sim_time: false
+    base_link_frame: "base_link"
     compass:
       sensor_timeout: 0.5
       yaw_meas_variance: 10.0

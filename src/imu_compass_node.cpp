@@ -15,7 +15,7 @@ double magn(tf2::Vector3 a) {
 
 IMUCompassNode::IMUCompassNode() : Node("imu_compass_node") {
   // Declare and get parameters
-  this->declare_parameter("base_link", "base_link");
+  this->declare_parameter("base_link_frame", "base_link");
   this->declare_parameter("mag_bias.x", 0.0);
   this->declare_parameter("mag_bias.y", 0.0);
   this->declare_parameter("mag_bias.z", 0.0);
@@ -24,7 +24,7 @@ IMUCompassNode::IMUCompassNode() : Node("imu_compass_node") {
   this->declare_parameter("compass.gyro_meas_variance", 0.01);
   this->declare_parameter("compass.mag_declination", 0.0);
 
-  this->get_parameter("base_link", this->base_link_);
+  this->get_parameter("base_link_frame", this->base_link_);
   this->get_parameter("mag_bias.x", this->mag_zero_x_);
   this->get_parameter("mag_bias.y", this->mag_zero_y_);
   this->get_parameter("mag_bias.z", this->mag_zero_z_);
