@@ -1,0 +1,13 @@
+imu_compass_node:
+  ros__parameters:
+    base_link: "base_link"
+    compass:
+      sensor_timeout: 0.5
+      yaw_meas_variance: 10.0
+      gyro_meas_variance: 0.01
+      mag_declination: 0.0
+    mag_bias:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      radius: 0.0

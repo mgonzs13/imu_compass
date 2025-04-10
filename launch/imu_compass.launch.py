@@ -9,7 +9,7 @@ def generate_launch_description():
         "share",
         "imu_compass",
         "config",
-        "mag_bias.yaml",
+        "imu_compass.yaml",
     )
 
     return LaunchDescription(

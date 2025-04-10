@@ -3,9 +3,11 @@
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 
 #include <geometry_msgs/msg/vector3_stamped.hpp>
 #include <sensor_msgs/msg/imu.hpp>
+#include <sensor_msgs/msg/magnetic_field.hpp>
 #include <std_msgs/msg/float32.hpp>
 
 #include <geometry_msgs/msg/transform_stamped.hpp>
@@ -21,12 +23,12 @@ public:
 private:
   // Subscribers
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
-  rclcpp::Subscription<geometry_msgs::msg::Vector3Stamped>::SharedPtr mag_sub_;
+  rclcpp::Subscription<sensor_msgs::msg::MagneticField>::SharedPtr mag_sub_;
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr decl_sub_;
 
   // Publishers
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
-  rclcpp::Publisher<geometry_msgs::msg::Vector3Stamped>::SharedPtr mag_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr mag_pub_;
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr compass_pub_;
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr raw_compass_pub_;
 
@@ -38,20 +40,22 @@ private:
   rclcpp::TimerBase::SharedPtr debug_timer_;
 
   // Callback functions
-  void imuCallback(sensor_msgs::msg::Imu::SharedPtr msg);
-  void magCallback(const geometry_msgs::msg::Vector3Stamped::SharedPtr msg);
-  void declCallback(const std_msgs::msg::Float32::SharedPtr msg);
-  void debugCallback();
+  void imu_callback(sensor_msgs::msg::Imu::SharedPtr msg);
+  void mag_callback(sensor_msgs::msg::MagneticField::SharedPtr msg);
+  void decl_callback(const std_msgs::msg::Float32::SharedPtr msg);
+  void debug_callback();
   void
-  repackageImuPublish(const geometry_msgs::msg::TransformStamped &transform);
+  repackage_imu_publish(const geometry_msgs::msg::TransformStamped &transform);
 
   // Heading Filter Methods and State
-  void initFilter(double heading_meas);
+  void init_filter(double heading_meas);
 
   bool first_mag_reading_;
   bool first_gyro_reading_;
   bool filter_initialized_;
   bool gyro_update_complete_;
+
+  std::string base_link_;
 
   double mag_zero_x_, mag_zero_y_, mag_zero_z_;
 
