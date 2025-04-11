@@ -273,15 +273,14 @@ void IMUCompassNode::repackage_imu_publish(
   double compass_heading = this->curr_heading_ - this->mag_declination_;
   tf2::Quaternion new_yaw = tf2::Quaternion();
   new_yaw.setRPY(0, 0, compass_heading);
-  tf2::Quaternion diff = tf2::Quaternion();
-  diff.setRPY(0, 0, compass_heading - tf2::getYaw(q));
 
-  tf2::Quaternion corrected = diff * q;
-  tf2::Transform corrected_tf(corrected);
-  tf2::Transform back_transform = corrected_tf * tf_trans.inverse();
+  double roll, pitch, _;
+  tf2::Matrix3x3(q).getRPY(roll, pitch, _);
 
-  this->curr_imu_reading_.orientation =
-      tf2::toMsg(back_transform.getRotation());
+  tf2::Quaternion new_orientation;
+  new_orientation.setRPY(roll, pitch, compass_heading);
+
+  this->curr_imu_reading_.orientation = tf2::toMsg(new_orientation);
 
   std_msgs::msg::Float32 heading_msg;
   heading_msg.data = compass_heading;
@@ -291,7 +290,7 @@ void IMUCompassNode::repackage_imu_publish(
 
 void IMUCompassNode::init_filter(double heading_meas) {
   this->curr_heading_ = heading_meas;
-  this->curr_heading_variance_ = 1.0;
+  this->curr_heading_variance_ = 0.1;
   this->filter_initialized_ = true;
   RCLCPP_INFO(this->get_logger(), "Compass filter initialized with heading: %f",
               heading_meas);
