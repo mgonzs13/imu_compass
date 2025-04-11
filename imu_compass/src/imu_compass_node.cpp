@@ -14,6 +14,7 @@ double magn(tf2::Vector3 a) {
 }
 
 IMUCompassNode::IMUCompassNode() : Node("imu_compass_node") {
+
   // Declare and get parameters
   this->declare_parameter("base_link_frame", "base_link");
   this->declare_parameter("mag_bias.x", 0.0);
@@ -83,6 +84,7 @@ IMUCompassNode::IMUCompassNode() : Node("imu_compass_node") {
 }
 
 void IMUCompassNode::debug_callback() {
+
   if (!this->first_gyro_reading_) {
     RCLCPP_WARN(this->get_logger(),
                 "Waiting for IMU data, no gyroscope data available");
@@ -113,6 +115,7 @@ void IMUCompassNode::debug_callback() {
 }
 
 void IMUCompassNode::imu_callback(sensor_msgs::msg::Imu::SharedPtr data) {
+
   auto gyro_vector = data->angular_velocity;
   geometry_msgs::msg::Vector3 gyro_vector_transformed;
 
@@ -168,6 +171,7 @@ void IMUCompassNode::decl_callback(
 
 void IMUCompassNode::mag_callback(
     sensor_msgs::msg::MagneticField::SharedPtr data) {
+
   if (std::isnan(data->magnetic_field.x) ||
       std::isnan(data->magnetic_field.y) || std::isnan(data->magnetic_field.z))
     return;

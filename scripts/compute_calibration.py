@@ -25,6 +25,18 @@ parser.add_argument(
     help="Output YAML file",
 )
 parser.add_argument(
+    "--imu-topic",
+    type=str,
+    default="/imu/data",
+    help="IMU topic name",
+)
+parser.add_argument(
+    "--mag-topic",
+    type=str,
+    default="/imu/mag",
+    help="Magnetometer topic name",
+)
+parser.add_argument(
     "--plots", action="store_true", help="Show plots if matplotlib is available"
 )
 args = parser.parse_args()
@@ -53,13 +65,11 @@ def read_ros2_messages(bag_path, topic_filter):
     return messages, type_map
 
 
-bag_data, type_map = read_ros2_messages(
-    args.bag, ["/robot/zed2/zed_node/imu/data", "/robot/zed2/zed_node/imu/mag"]
-)
+bag_data, type_map = read_ros2_messages(args.bag, [args.imu_topic, args.mag_topic])
 
 # Load message types
-imu_msg_type = get_message(type_map["/robot/zed2/zed_node/imu/data"])
-mag_msg_type = get_message(type_map["/robot/zed2/zed_node/imu/mag"])
+imu_msg_type = get_message(type_map[args.imu_topic])
+mag_msg_type = get_message(type_map[args.mag_topic])
 
 # Static transform assumed if no TF info
 imu_rot = np.array([0, 0, 0, 1])
@@ -67,7 +77,7 @@ t_mat = np.linalg.inv(quaternion_matrix(imu_rot))
 
 # Extract RPY (yaw)
 time_yaw_tuples = []
-for data, t in bag_data.get("/robot/zed2/zed_node/imu/data", []):
+for data, t in bag_data.get(args.imu_topic, []):
     msg = deserialize_message(data, imu_msg_type)
     vec = np.array(
         [
@@ -81,7 +91,7 @@ for data, t in bag_data.get("/robot/zed2/zed_node/imu/data", []):
     time_yaw_tuples.append((t / 1e9, float(transformed[2])))
 
 if len(time_yaw_tuples) < 100:
-    print("Insufficient data or missing /imu/data topic.")
+    print("Insufficient data or missing IMU topic.")
     exit(1)
 
 time_yaw = list(zip(*time_yaw_tuples))
@@ -110,7 +120,7 @@ if plt and args.plots:
 
 # Collect magnetometer data
 vecs = []
-for data, t in bag_data.get("/robot/zed2/zed_node/imu/mag", []):
+for data, t in bag_data.get(args.mag_topic, []):
     t_sec = t / 1e9
     if time_start <= t_sec <= time_end:
         msg = deserialize_message(data, mag_msg_type)
