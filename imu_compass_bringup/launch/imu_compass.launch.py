@@ -16,13 +16,17 @@ def generate_launch_description():
     )
 
     params_file = os.path.join(
-        get_package_share_directory("imu_compass"), "config", "imu_compass.yaml"
+        get_package_share_directory("imu_compass_bringup"),
+        "config",
+        "imu_compass.yaml",
     )
 
     param_substitutions = {"use_sim_time": use_sim_time}
 
     configured_params = RewrittenYaml(
-        source_file=params_file, param_rewrites=param_substitutions, convert_types=True
+        source_file=params_file,
+        param_rewrites=param_substitutions,
+        convert_types=True,
     )
 
     return LaunchDescription(

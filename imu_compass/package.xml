@@ -3,7 +3,7 @@
   <name>imu_compass</name>
   <version>0.0.5</version>
   <description>Node to combine IMU data (accelerometers and gyroscopes) with Compass data (magnetometers) for a cleaner reading of a Vehicle's Heading</description>
-  <maintainer email="pmukherj@clearpathrobotics.com">Prasenjit Mukherjee</maintainer>
+  <maintainer email="mgons@unileon.es">Miguel Ángel González Santamarta</maintainer>
   <license>BSD</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>rclcpp</depend>

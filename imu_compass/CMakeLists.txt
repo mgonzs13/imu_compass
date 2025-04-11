@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.5)
 project(imu_compass)
 
@@ -36,12 +37,6 @@ ament_target_dependencies(imu_compass_node
 # Installation
 install(TARGETS imu_compass_node
   DESTINATION lib/${PROJECT_NAME}
-)
-
-install(DIRECTORY
-  launch
-  config
-  DESTINATION share/${PROJECT_NAME}/
 )
 
 # Package
