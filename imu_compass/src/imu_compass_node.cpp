@@ -47,6 +47,16 @@ IMUCompassNode::IMUCompassNode() : Node("imu_compass_node") {
   this->tf_listener_ =
       std::make_shared<tf2_ros::TransformListener>(*this->tf_buffer_);
 
+  // Publishers
+  this->imu_pub_ =
+      this->create_publisher<sensor_msgs::msg::Imu>("imu/data_compass", 10);
+  this->compass_pub_ =
+      create_publisher<std_msgs::msg::Float32>("imu/compass_heading", 10);
+  this->mag_pub_ =
+      create_publisher<sensor_msgs::msg::MagneticField>("imu/mag_calib", 10);
+  this->raw_compass_pub_ =
+      create_publisher<std_msgs::msg::Float32>("imu/raw_compass_heading", 10);
+
   // Subscribers
   this->imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
       "imu/data", rclcpp::SensorDataQoS(),
@@ -57,16 +67,6 @@ IMUCompassNode::IMUCompassNode() : Node("imu_compass_node") {
   this->decl_sub_ = this->create_subscription<std_msgs::msg::Float32>(
       "imu/declination", rclcpp::SensorDataQoS(),
       std::bind(&IMUCompassNode::decl_callback, this, _1));
-
-  // Publishers
-  this->imu_pub_ =
-      this->create_publisher<sensor_msgs::msg::Imu>("imu/data_compass", 10);
-  this->compass_pub_ =
-      create_publisher<std_msgs::msg::Float32>("imu/compass_heading", 10);
-  this->mag_pub_ =
-      create_publisher<sensor_msgs::msg::MagneticField>("imu/mag_calib", 10);
-  this->raw_compass_pub_ =
-      create_publisher<std_msgs::msg::Float32>("imu/raw_compass_heading", 10);
 
   // Timer
   this->debug_timer_ =
